@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>סימולציית זבוב AI</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #f0f0f0; }
+        canvas { background: white; border: 2px solid #333; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+        .controls { margin: 20px; }
+        input { padding: 10px; width: 300px; }
+    </style>
+</head>
+<body>
+
+    <h1>זבוב ה-AI שלי 🪰</h1>
+    
+    <div class="controls">
+        <input type="password" id="apiKey" placeholder="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">
+        <p>הזבוב ינסה להגיע לאוכל (העיגול האדום) בעזרת ה-AI.</p>
+    </div>
+
+    <canvas id="simCanvas" width="800" height="500"></canvas>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const apiKeyInput = document.getElementById('apiKey');
+
+        let fly = { x: 400, y: 250, energy: 100 };
+        let food = { x: Math.random() * 700 + 50, y: Math.random() * 400 + 50 };
+
+        function draw() {
+            // ניקוי מסך
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // ציור אוכל
+            ctx.fillStyle = 'red';
+            ctx.beginPath();
+            ctx.arc(food.x, food.y, 10, 0, Math.PI * 2);
+            ctx.fill();
+
+            // ציור זבוב
+            ctx.fillStyle = '#333';
+            ctx.beginPath();
+            ctx.arc(fly.x, fly.y, 8, 0, Math.PI * 2); // גוף
+            ctx.fill();
+            
+            // כנפיים
+            ctx.fillStyle = 'rgba(200, 200, 200, 0.6)';
+            ctx.beginPath();
+            ctx.arc(fly.x - 10, fly.y - 5, 7, 0, Math.PI * 2);
+            ctx.arc(fly.x + 10, fly.y - 5, 7, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        async function askAI() {
+            const key = apiKeyInput.value;
+            if (!key) {
+                // אם אין מפתח, תנועה אקראית
+                moveFly(Math.random() > 0.5 ? "UP" : "DOWN");
+                return;
+            }
+
+            try {
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${key}`
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-3.5-turbo",
+                        messages: [{role: "user", content: `You are a fly at x:${fly.x}, y:${fly.y}. Food is at x:${food.x}, y:${food.y}. Move: UP, DOWN, LEFT, or RIGHT? Answer one word only.`}],
+                        max_tokens: 5
+                    })
+                });
+
+                const data = await response.json();
+                const decision = data.choices[0].message.content.toUpperCase();
+                moveFly(decision);
+            } catch (err) {
+                console.error("AI Error:", err);
+            }
+        }
+
+        function moveFly(direction) {
+            const step = 20;
+            if (direction.includes("UP")) fly.y -= step;
+            if (direction.includes("DOWN")) fly.y += step;
+            if (direction.includes("LEFT")) fly.x -= step;
+            if (direction.includes("RIGHT")) fly.x += step;
+
+            // בדיקה אם אכל
+            let dist = Math.sqrt((fly.x-food.x)**2 + (fly.y-food.y)**2);
+            if (dist < 20) {
+                food = { x: Math.random() * 700 + 50, y: Math.random() * 400 + 50 };
+                alert("הזבוב אכל! האוכל עבר מקום.");
+            }
+
+            draw();
+        }
+
+        // לולאת הסימולציה
+        draw();
+        setInterval(askAI, 2000); // ה-AI מחליט כל 2 שניות (כדי לא לבזבז כסף מהר מדי)
+
+    </script>
+</body>
+</html>
