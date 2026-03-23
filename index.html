@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>סימולציית זבוב AI משופרת</title>
+    <title>🪰 הזבוב שלי - סימולציית חיית מחמד</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -19,23 +19,38 @@
 
         .container {
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border-radius: 20px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.3);
             padding: 30px;
-            max-width: 1200px;
+            max-width: 1300px;
             width: 100%;
         }
 
-        h1 {
+        .header {
             text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
             color: #333;
-            margin-bottom: 20px;
-            font-size: 2.5em;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
 
         .main-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1.3fr 1fr;
             gap: 30px;
             margin-bottom: 20px;
         }
@@ -48,20 +63,58 @@
         }
 
         canvas {
-            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
-            border: 3px solid #333;
-            border-radius: 10px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #87CEEB 0%, #E0F6FF 50%, #FFE4B5 100%);
+            border: 4px solid #333;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             cursor: crosshair;
             max-width: 100%;
             height: auto;
         }
 
-        .controls-panel {
-            background: #f8f9fa;
-            padding: 20px;
+        .mood-indicator {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(90deg, #f39c12, #e74c3c, #c0392b);
             border-radius: 10px;
+            color: white;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .mood-good {
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+        }
+
+        .mood-ok {
+            background: linear-gradient(90deg, #f39c12, #e67e22);
+        }
+
+        .mood-hungry {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .panel {
+            background: linear-gradient(135deg, #f8f9fa 0%, #f0f0f0 100%);
+            padding: 25px;
+            border-radius: 15px;
             border-left: 5px solid #667eea;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .panel h2 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.3em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
         }
 
         .control-group {
@@ -72,18 +125,21 @@
             display: block;
             font-weight: 600;
             margin-bottom: 8px;
-            color: #333;
+            color: #555;
+            font-size: 0.95em;
         }
 
         input[type="password"],
         input[type="text"],
-        select {
+        select,
+        input[type="range"] {
             width: 100%;
             padding: 12px;
             border: 2px solid #ddd;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 14px;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
+            font-family: inherit;
         }
 
         input[type="password"]:focus,
@@ -91,7 +147,34 @@
         select:focus {
             outline: none;
             border-color: #667eea;
-            box-shadow: 0 0 8px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 0 12px rgba(102, 126, 234, 0.3);
+        }
+
+        input[type="range"] {
+            padding: 0;
+            cursor: pointer;
+            height: 6px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
         .button-group {
@@ -102,23 +185,25 @@
 
         button {
             flex: 1;
-            padding: 12px;
+            padding: 14px;
             border: none;
-            border-radius: 6px;
-            font-weight: 600;
+            border-radius: 8px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
             font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .btn-start {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
             color: white;
         }
 
         .btn-start:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.4);
         }
 
         .btn-start:disabled {
@@ -127,13 +212,13 @@
         }
 
         .btn-stop {
-            background: #e74c3c;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
             color: white;
         }
 
         .btn-stop:hover:not(:disabled) {
-            background: #c0392b;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
         }
 
         .btn-stop:disabled {
@@ -142,103 +227,97 @@
         }
 
         .btn-reset {
-            background: #95a5a6;
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
             color: white;
         }
 
         .btn-reset:hover {
-            background: #7f8c8d;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(149, 165, 166, 0.4);
         }
 
-        .stats-panel {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 5px solid #764ba2;
+        .stats-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
 
         .stat-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px;
-            margin-bottom: 10px;
             background: white;
-            border-radius: 6px;
-            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
         .stat-label {
+            font-size: 0.85em;
+            color: #999;
             font-weight: 600;
-            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
         }
 
         .stat-value {
-            color: #667eea;
+            font-size: 1.8em;
             font-weight: bold;
-            font-size: 1.1em;
+            color: #667eea;
         }
 
-        .stat-value.critical {
+        .stat-item.hunger .stat-value {
             color: #e74c3c;
         }
 
-        .stat-value.good {
+        .stat-item.playtime .stat-value {
             color: #27ae60;
+        }
+
+        .stat-item.food-eaten .stat-value {
+            color: #f39c12;
         }
 
         .progress-bar {
             width: 100%;
-            height: 8px;
-            background: #ddd;
-            border-radius: 4px;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
             overflow: hidden;
-            margin-top: 5px;
+            margin-top: 8px;
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            transition: width 0.3s;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            transition: width 0.5s ease;
+            border-radius: 5px;
         }
 
-        .progress-fill.warning {
-            background: linear-gradient(90deg, #f39c12 0%, #e67e22 100%);
-        }
-
-        .progress-fill.critical {
-            background: linear-gradient(90deg, #e74c3c 0%, #c0392b 100%);
+        .progress-fill.hunger-bar {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
         }
 
         .info-box {
-            background: #e3f2fd;
-            border-left: 4px solid #2196F3;
+            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+            border-left: 4px solid #667eea;
             padding: 15px;
-            border-radius: 6px;
+            border-radius: 8px;
             margin-top: 15px;
-            font-size: 13px;
-            color: #1565c0;
-        }
-
-        @media (max-width: 800px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            h1 {
-                font-size: 1.8em;
-            }
+            font-size: 0.9em;
+            color: #555;
+            line-height: 1.6;
         }
 
         .legend {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             justify-content: center;
             margin-top: 20px;
             padding: 15px;
             background: #f8f9fa;
             border-radius: 10px;
-            font-size: 13px;
+            font-size: 0.9em;
+            flex-wrap: wrap;
         }
 
         .legend-item {
@@ -248,132 +327,218 @@
         }
 
         .legend-dot {
-            width: 15px;
-            height: 15px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
+        }
+
+        .achievement-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-top: 10px;
+            animation: pulse 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .fly-mood {
+            font-size: 3em;
+            margin: 10px 0;
+            animation: wobble 0.6s ease-in-out infinite;
+        }
+
+        @keyframes wobble {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        .fly-mood.excited {
+            animation: bounce 0.4s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .fly-mood.sleepy {
+            animation: nod 1s ease-in-out infinite;
+        }
+
+        @keyframes nod {
+            0%, 100% { transform: rotateZ(0deg); }
+            25% { transform: rotateZ(-10deg); }
+            75% { transform: rotateZ(10deg); }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🪰 סימולציית זבוב AI משופרת</h1>
+        <div class="header">
+            <h1>🪰 הזבוב שלי - סימולציית חיית מחמד</h1>
+            <p class="subtitle">לעזור לזבוב שלך להישאר מסופק וחי</p>
+        </div>
 
         <div class="main-grid">
             <div class="canvas-section">
-                <canvas id="simCanvas" width="600" height="500"></canvas>
+                <canvas id="simCanvas" width="700" height="550"></canvas>
+                <div class="mood-indicator" id="moodIndicator">
+                    🟢 הזבוב שמח!
+                </div>
                 <div class="legend">
                     <div class="legend-item">
                         <div class="legend-dot" style="background: #333;"></div>
-                        <span>זבוב</span>
+                        <span>הזבוב</span>
                     </div>
                     <div class="legend-item">
                         <div class="legend-dot" style="background: #e74c3c;"></div>
-                        <span>אוכל</span>
+                        <span>אוכל맛있어</span>
                     </div>
                     <div class="legend-item">
                         <div class="legend-dot" style="background: rgba(102, 126, 234, 0.3);"></div>
-                        <span>path זיכרון</span>
+                        <span>אזור חקירה</span>
                     </div>
                 </div>
             </div>
 
-            <div>
-                <div class="controls-panel">
-                    <h2 style="margin-bottom: 20px; color: #333;">⚙️ הגדרות</h2>
+            <div class="sidebar">
+                <div class="panel">
+                    <h2>⚙️ הגדרות</h2>
 
                     <div class="control-group">
-                        <label>🔑 OpenAI API Key (אופציונלי)</label>
-                        <input type="password" id="apiKey" placeholder="sk-... (אם לא תיתן, יש fallback logic)">
-                    </div>
-
-                    <div class="control-group">
-                        <label>🤖 מודל AI</label>
-                        <select id="model">
-                            <option value="gpt-4o-mini">GPT-4o Mini (מהיר וזול)</option>
-                            <option value="gpt-4o">GPT-4o (חכם יותר)</option>
-                            <option value="gpt-3.5-turbo">GPT-3.5 Turbo (קלאסי)</option>
+                        <label>🤖 מצב AI</label>
+                        <select id="aiMode">
+                            <option value="smart">חכם (לא צריך API)</option>
+                            <option value="api">OpenAI API (אם יש Key)</option>
                         </select>
                     </div>
 
+                    <div class="control-group" id="apiKeyGroup" style="display: none;">
+                        <label>🔑 OpenAI API Key</label>
+                        <input type="password" id="apiKey" placeholder="sk-...">
+                    </div>
+
                     <div class="control-group">
-                        <label>⏱️ מהירות החלטות (שניות)</label>
+                        <label>⏱️ מהירות החלטות</label>
                         <input type="range" id="speed" min="1" max="5" value="2" style="cursor: pointer; width: 100%;">
-                        <div style="text-align: center; color: #667eea; font-weight: bold; margin-top: 5px;">
+                        <div style="text-align: center; color: #667eea; font-weight: bold; margin-top: 8px;">
                             <span id="speedValue">2</span>s
                         </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>📊 מצב קשיות</label>
+                        <select id="difficulty">
+                            <option value="easy">קל (רעב נמוך)</option>
+                            <option value="normal" selected>בינוני</option>
+                            <option value="hard">קשה (רעב גבוה)</option>
+                        </select>
                     </div>
 
                     <div class="button-group">
                         <button class="btn-start" id="startBtn">▶️ התחל</button>
                         <button class="btn-stop" id="stopBtn" disabled>⏹️ עצור</button>
-                        <button class="btn-reset" id="resetBtn">🔄 אפס</button>
                     </div>
 
+                    <button class="btn-reset" style="width: 100%; margin-top: 10px;">🔄 אפס</button>
+
                     <div class="info-box">
-                        💡 <strong>טיפ:</strong> הזבוב צריך לאכול כדי לשרוד! אנרגיה מינימלית = סוף המשחק. בלי API Key, זה משתמש בlogic אקראי חכם.
+                        💡 <strong>רמז:</strong> הזבוב שלך יתחיל להרגיש רעב. האכיל אותו בלחיצה על האוכל הנוכחי כדי שהוא יישאר שמח! ככל שהוא משחק יותר, כך הוא צריך יותר אוכל.
                     </div>
                 </div>
 
-                <div class="stats-panel" style="margin-top: 20px;">
-                    <h2 style="margin-bottom: 20px; color: #333;">📊 סטטיסטיקות</h2>
+                <div class="panel">
+                    <h2>📊 סטטיסטיקות</h2>
 
-                    <div class="stat-item">
-                        <span class="stat-label">⚡ אנרגיה</span>
-                        <span class="stat-value" id="energyDisplay">100</span>
-                    </div>
-                    <div style="margin-bottom: 10px;">
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="energyBar" style="width: 100%;"></div>
+                    <div class="stats-container">
+                        <div class="stat-item hunger">
+                            <div class="stat-label">🍖 רעב</div>
+                            <div class="stat-value" id="hungerDisplay">0%</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill hunger-bar" id="hungerBar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="stat-item playtime">
+                            <div class="stat-label">⏱️ זמן משחק</div>
+                            <div class="stat-value" id="playtimeDisplay">0:00</div>
+                        </div>
+
+                        <div class="stat-item food-eaten">
+                            <div class="stat-label">🎯 אוכל אכול</div>
+                            <div class="stat-value" id="foodEatenDisplay">0</div>
+                        </div>
+
+                        <div class="stat-item">
+                            <div class="stat-label">📏 מרחק</div>
+                            <div class="stat-value" id="distanceDisplay">--</div>
+                        </div>
+
+                        <div class="stat-item">
+                            <div class="stat-label">🔄 צעדים</div>
+                            <div class="stat-value" id="stepsDisplay">0</div>
+                        </div>
+
+                        <div class="stat-item">
+                            <div class="stat-label">🧠 סטטוס</div>
+                            <div class="stat-value" id="statusDisplay">מוכן</div>
                         </div>
                     </div>
 
-                    <div class="stat-item">
-                        <span class="stat-label">📏 מרחק לאוכל</span>
-                        <span class="stat-value" id="distanceDisplay">--</span>
-                    </div>
+                    <div id="achievements" style="margin-top: 15px;"></div>
+                </div>
 
-                    <div class="stat-item">
-                        <span class="stat-label">🍖 אוכל אכול</span>
-                        <span class="stat-value good" id="foodEatenDisplay">0</span>
-                    </div>
-
-                    <div class="stat-item">
-                        <span class="stat-label">🔄 צעדים</span>
-                        <span class="stat-value" id="stepsDisplay">0</span>
-                    </div>
-
-                    <div class="stat-item">
-                        <span class="stat-label">⏱️ זמן</span>
-                        <span class="stat-value" id="timeDisplay">0:00</span>
-                    </div>
-
-                    <div class="stat-item">
-                        <span class="stat-label">🧠 סטטוס AI</span>
-                        <span class="stat-value" id="aiStatusDisplay">מוכן</span>
-                    </div>
+                <div class="panel">
+                    <h2 id="moodTitle">😊 מצב רוח</h2>
+                    <div class="fly-mood" id="flyMood">😊</div>
+                    <div id="moodDescription" style="text-align: center; color: #555; font-size: 0.95em;">הזבוב בחצי דרך!</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        class FlySimulation {
+        class FlyPetSimulation {
             constructor() {
                 this.canvas = document.getElementById('simCanvas');
                 this.ctx = this.canvas.getContext('2d');
                 
-                this.reset();
-                
                 this.isRunning = false;
                 this.simulationInterval = null;
                 this.aiCallInterval = null;
+                this.hungerInterval = null;
                 this.startTime = null;
                 
-                this.memory = [];
-                this.apiKey = '';
-                this.model = 'gpt-4o-mini';
-                this.decisionInterval = 2000; // 2 seconds default
-                
+                this.reset();
                 this.setupEventListeners();
                 this.draw();
             }
@@ -382,47 +547,71 @@
                 this.fly = {
                     x: this.canvas.width / 2,
                     y: this.canvas.height / 2,
-                    energy: 100,
-                    radius: 8
+                    radius: 10,
+                    vx: 0,
+                    vy: 0
                 };
-                this.food = this.generateFood();
-                this.stats = {
-                    steps: 0,
-                    foodEaten: 0,
-                    startTime: Date.now()
-                };
-                this.memory = [];
-                this.startTime = null;
-                this.lastAICall = Date.now();
-            }
 
-            generateFood() {
-                return {
-                    x: Math.random() * (this.canvas.width - 100) + 50,
-                    y: Math.random() * (this.canvas.height - 100) + 50,
-                    radius: 10
+                this.food = this.generateFood();
+
+                this.hunger = 0; // 0-100, 0 = not hungry, 100 = starving
+                this.hungerRate = 0.3; // per second
+                this.difficulty = 'normal';
+
+                this.stats = {
+                    foodEaten: 0,
+                    steps: 0,
+                    maxHunger: 0,
+                    playtimeSeconds: 0
                 };
+
+                this.memory = [];
+                this.apiKey = '';
+                this.aiMode = 'smart';
+                this.decisionInterval = 2000;
+                this.startTime = null;
+
+                this.achievements = new Set();
             }
 
             setupEventListeners() {
                 document.getElementById('startBtn').addEventListener('click', () => this.start());
                 document.getElementById('stopBtn').addEventListener('click', () => this.stop());
-                document.getElementById('resetBtn').addEventListener('click', () => this.resetSimulation());
+                document.querySelector('.btn-reset').addEventListener('click', () => this.resetGame());
                 
                 document.getElementById('apiKey').addEventListener('change', (e) => {
                     this.apiKey = e.target.value;
                 });
-                
-                document.getElementById('model').addEventListener('change', (e) => {
-                    this.model = e.target.value;
+
+                document.getElementById('aiMode').addEventListener('change', (e) => {
+                    this.aiMode = e.target.value;
+                    const apiGroup = document.getElementById('apiKeyGroup');
+                    apiGroup.style.display = e.target.value === 'api' ? 'block' : 'none';
                 });
 
                 document.getElementById('speed').addEventListener('input', (e) => {
                     this.decisionInterval = parseInt(e.target.value) * 1000;
                     document.getElementById('speedValue').textContent = e.target.value;
-                    if (this.isRunning) {
-                        clearInterval(this.aiCallInterval);
-                        this.aiCallInterval = setInterval(() => this.makeDecision(), this.decisionInterval);
+                });
+
+                document.getElementById('difficulty').addEventListener('change', (e) => {
+                    this.difficulty = e.target.value;
+                    this.hungerRate = {
+                        'easy': 0.15,
+                        'normal': 0.3,
+                        'hard': 0.5
+                    }[e.target.value];
+                });
+
+                // Click to feed
+                this.canvas.addEventListener('click', (e) => {
+                    const rect = this.canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const dist = Math.hypot(x - this.food.x, y - this.food.y);
+                    
+                    if (dist < this.food.radius + this.fly.radius && this.isRunning) {
+                        this.feedFly();
                     }
                 });
             }
@@ -432,13 +621,13 @@
                 
                 this.isRunning = true;
                 this.startTime = Date.now();
-                this.stats.startTime = Date.now();
                 
                 document.getElementById('startBtn').disabled = true;
                 document.getElementById('stopBtn').disabled = false;
                 
                 this.simulationInterval = setInterval(() => this.update(), 30);
                 this.aiCallInterval = setInterval(() => this.makeDecision(), this.decisionInterval);
+                this.hungerInterval = setInterval(() => this.updateHunger(), 100);
                 
                 this.updateStatus('פעיל ✅');
             }
@@ -447,6 +636,7 @@
                 this.isRunning = false;
                 clearInterval(this.simulationInterval);
                 clearInterval(this.aiCallInterval);
+                clearInterval(this.hungerInterval);
                 
                 document.getElementById('startBtn').disabled = false;
                 document.getElementById('stopBtn').disabled = true;
@@ -454,7 +644,7 @@
                 this.updateStatus('עצור');
             }
 
-            resetSimulation() {
+            resetGame() {
                 this.stop();
                 this.reset();
                 this.draw();
@@ -462,211 +652,323 @@
                 this.updateStatus('מוכן');
             }
 
-            async makeDecision() {
-                this.updateStatus('חושב...');
-                
-                if (this.apiKey) {
-                    await this.askAI();
-                } else {
-                    this.smartRandomMove();
-                }
-                
-                this.updateStatus('פעיל ✅');
+            generateFood() {
+                return {
+                    x: Math.random() * (this.canvas.width - 100) + 50,
+                    y: Math.random() * (this.canvas.height - 100) + 50,
+                    radius: 12
+                };
             }
 
-            async askAI() {
-                try {
-                    const distToFood = this.getDistance(this.fly, this.food);
-                    const prompt = `You are a fly at position (${Math.round(this.fly.x)}, ${Math.round(this.fly.y)}). 
-Food is at (${Math.round(this.food.x)}, ${Math.round(this.food.y)}), distance: ${Math.round(distToFood)}px.
-Your energy: ${Math.round(this.fly.energy)}/100.
-Recent decisions: ${this.memory.slice(-3).join(', ') || 'none'}.
-Make the BEST move to get food. Answer with ONLY one direction: UP, DOWN, LEFT, or RIGHT.`;
-
-                    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${this.apiKey}`
-                        },
-                        body: JSON.stringify({
-                            model: this.model,
-                            messages: [{ role: "user", content: prompt }],
-                            max_tokens: 5,
-                            temperature: 0.3
-                        })
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`API error: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-                    const decision = data.choices[0].message.content.toUpperCase().trim();
-                    
-                    this.moveFly(decision);
-                } catch (err) {
-                    console.error("AI Error:", err);
-                    this.updateStatus('שגיאת API, fallback');
-                    this.smartRandomMove();
-                }
-            }
-
-            smartRandomMove() {
-                const distToFood = this.getDistance(this.fly, this.food);
-                const angleToFood = Math.atan2(this.food.y - this.fly.y, this.food.x - this.fly.x);
-                
-                // 70% chance to move toward food, 30% random
-                if (Math.random() < 0.7) {
-                    const angle = angleToFood + (Math.random() - 0.5) * 0.5;
-                    const directions = ['RIGHT', 'LEFT', 'DOWN', 'UP'];
-                    const bestDir = Math.abs(Math.cos(angle)) > Math.abs(Math.sin(angle)) 
-                        ? (Math.cos(angle) > 0 ? 'RIGHT' : 'LEFT')
-                        : (Math.sin(angle) > 0 ? 'DOWN' : 'UP');
-                    this.moveFly(bestDir);
-                } else {
-                    const directions = ['UP', 'DOWN', 'LEFT', 'RIGHT'];
-                    this.moveFly(directions[Math.floor(Math.random() * directions.length)]);
-                }
-            }
-
-            getDistance(p1, p2) {
-                return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
-            }
-
-            moveFly(direction) {
-                const step = 15;
-                const oldX = this.fly.x;
-                const oldY = this.fly.y;
-
-                if (direction.includes('UP')) this.fly.y = Math.max(this.fly.radius, this.fly.y - step);
-                if (direction.includes('DOWN')) this.fly.y = Math.min(this.canvas.height - this.fly.radius, this.fly.y + step);
-                if (direction.includes('LEFT')) this.fly.x = Math.max(this.fly.radius, this.fly.x - step);
-                if (direction.includes('RIGHT')) this.fly.x = Math.min(this.canvas.width - this.fly.radius, this.fly.x + step);
-
-                this.memory.push(direction);
-                if (this.memory.length > 5) this.memory.shift();
-
-                // Energy cost
-                this.fly.energy -= 2;
-
-                // Check collision with food
-                const dist = this.getDistance(this.fly, this.food);
-                if (dist < this.fly.radius + this.food.radius) {
-                    this.fly.energy = Math.min(100, this.fly.energy + 40);
+            feedFly() {
+                const dist = Math.hypot(this.fly.x - this.food.x, this.fly.y - this.food.y);
+                if (dist < this.food.radius + this.fly.radius) {
+                    this.hunger = Math.max(0, this.hunger - 35);
                     this.stats.foodEaten++;
                     this.food = this.generateFood();
+
+                    // Achievements
+                    if (this.stats.foodEaten === 5) this.unlockAchievement('🏆 אוכל 5!');
+                    if (this.stats.foodEaten === 20) this.unlockAchievement('👑 צייד מנוסה!');
+                    if (this.hunger < 10) this.unlockAchievement('😋 רק אכל!');
+
+                    // Visual feedback
+                    this.ctx.fillStyle = 'rgba(39, 174, 96, 0.3)';
+                    this.ctx.beginPath();
+                    this.ctx.arc(this.food.x, this.food.y, this.food.radius * 2, 0, Math.PI * 2);
+                    this.ctx.fill();
+                }
+            }
+
+            unlockAchievement(achievement) {
+                if (!this.achievements.has(achievement)) {
+                    this.achievements.add(achievement);
+                    const div = document.createElement('div');
+                    div.className = 'achievement-badge';
+                    div.textContent = achievement;
+                    document.getElementById('achievements').appendChild(div);
+                }
+            }
+
+            updateHunger() {
+                this.hunger = Math.min(100, this.hunger + this.hungerRate * 0.1);
+                this.stats.maxHunger = Math.max(this.stats.maxHunger, this.hunger);
+            }
+
+            async makeDecision() {
+                if (this.hunger > 70) {
+                    this.moveTowardsFood();
+                } else if (this.hunger > 30) {
+                    // Sometimes explore
+                    if (Math.random() < 0.6) {
+                        this.moveTowardsFood();
+                    } else {
+                        this.randomWalk();
+                    }
+                } else {
+                    // Exploration mode
+                    if (Math.random() < 0.4) {
+                        this.moveTowardsFood();
+                    } else {
+                        this.randomWalk();
+                    }
                 }
 
                 this.stats.steps++;
             }
 
-            update() {
-                // Passive energy drain
-                this.fly.energy -= 0.05;
+            moveTowardsFood() {
+                const angle = Math.atan2(this.food.y - this.fly.y, this.food.x - this.fly.x);
+                const noise = (Math.random() - 0.5) * 0.4;
+                const finalAngle = angle + noise;
+                
+                const speed = 8;
+                this.fly.vx = Math.cos(finalAngle) * speed;
+                this.fly.vy = Math.sin(finalAngle) * speed;
 
-                // Game over if energy depleted
-                if (this.fly.energy <= 0) {
+                this.memory.push('FOOD');
+                if (this.memory.length > 5) this.memory.shift();
+            }
+
+            randomWalk() {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 6;
+                this.fly.vx = Math.cos(angle) * speed;
+                this.fly.vy = Math.sin(angle) * speed;
+
+                this.memory.push('EXPLORE');
+                if (this.memory.length > 5) this.memory.shift();
+            }
+
+            update() {
+                // Update position with velocity
+                this.fly.x += this.fly.vx;
+                this.fly.y += this.fly.vy;
+
+                // Boundaries
+                if (this.fly.x - this.fly.radius < 0 || this.fly.x + this.fly.radius > this.canvas.width) {
+                    this.fly.vx *= -0.8;
+                    this.fly.x = Math.max(this.fly.radius, Math.min(this.canvas.width - this.fly.radius, this.fly.x));
+                }
+                if (this.fly.y - this.fly.radius < 0 || this.fly.y + this.fly.radius > this.canvas.height) {
+                    this.fly.vy *= -0.8;
+                    this.fly.y = Math.max(this.fly.radius, Math.min(this.canvas.height - this.fly.radius, this.fly.y));
+                }
+
+                // Friction
+                this.fly.vx *= 0.95;
+                this.fly.vy *= 0.95;
+
+                // Auto-feed if hungry enough and close
+                if (this.hunger > 85) {
+                    const dist = Math.hypot(this.fly.x - this.food.x, this.fly.y - this.food.y);
+                    if (dist < this.food.radius + this.fly.radius + 5) {
+                        this.feedFly();
+                    }
+                }
+
+                // Game over if starving too long
+                if (this.hunger >= 100) {
                     this.stop();
-                    alert(`🎮 המשחק הסתיים!\nאוכל אכול: ${this.stats.foodEaten}\nצעדים: ${this.stats.steps}`);
-                    this.updateStatus('משחק הסתיים');
+                    alert(`💀 הזבוב שלך מת מרעב!\n\nאוכל אכול: ${this.stats.foodEaten}\nזמן משחק: ${this.getPlaytimeString()}`);
+                    this.updateStatus('משחק הסתיים 💀');
                 }
 
                 this.draw();
                 this.updateDisplay();
             }
 
+            getDistance(p1, p2) {
+                return Math.hypot(p1.x - p2.x, p1.y - p2.y);
+            }
+
             draw() {
-                // Clear with gradient
+                // Sky gradient
                 const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
                 gradient.addColorStop(0, '#87CEEB');
-                gradient.addColorStop(1, '#E0F6FF');
+                gradient.addColorStop(0.6, '#E0F6FF');
+                gradient.addColorStop(1, '#FFE4B5');
                 this.ctx.fillStyle = gradient;
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-                // Draw memory path
-                if (this.memory.length > 1) {
-                    this.ctx.strokeStyle = 'rgba(102, 126, 234, 0.2)';
-                    this.ctx.lineWidth = 2;
-                    this.ctx.beginPath();
-                    this.ctx.arc(this.fly.x, this.fly.y, 30, 0, Math.PI * 2);
-                    this.ctx.stroke();
-                }
+                // Exploration radius
+                this.ctx.strokeStyle = `rgba(102, 126, 234, ${0.1 + (this.hunger / 100) * 0.2})`;
+                this.ctx.lineWidth = 2;
+                this.ctx.beginPath();
+                this.ctx.arc(this.fly.x, this.fly.y, 50, 0, Math.PI * 2);
+                this.ctx.stroke();
 
-                // Draw food
+                // Food
                 this.ctx.fillStyle = '#e74c3c';
                 this.ctx.beginPath();
                 this.ctx.arc(this.food.x, this.food.y, this.food.radius, 0, Math.PI * 2);
                 this.ctx.fill();
+                
+                // Food shimmer
+                this.ctx.strokeStyle = 'rgba(231, 76, 60, 0.5)';
+                this.ctx.lineWidth = 2;
+                this.ctx.beginPath();
+                this.ctx.arc(this.food.x, this.food.y, this.food.radius + 5, 0, Math.PI * 2);
+                this.ctx.stroke();
 
-                // Draw fly body
+                // Fly body
                 this.ctx.fillStyle = '#333';
                 this.ctx.beginPath();
                 this.ctx.arc(this.fly.x, this.fly.y, this.fly.radius, 0, Math.PI * 2);
                 this.ctx.fill();
 
-                // Draw wings
-                this.ctx.fillStyle = 'rgba(200, 200, 200, 0.6)';
+                // Eyes (position based on hunger)
+                const eyeOffset = 4;
+                const hungerPercent = this.hunger / 100;
+                this.ctx.fillStyle = '#fff';
                 this.ctx.beginPath();
-                this.ctx.ellipse(this.fly.x - 10, this.fly.y - 6, 7, 4, -Math.PI / 4, 0, Math.PI * 2);
+                this.ctx.arc(this.fly.x - 4, this.fly.y - 3 - hungerPercent * 2, 2, 0, Math.PI * 2);
                 this.ctx.fill();
                 this.ctx.beginPath();
-                this.ctx.ellipse(this.fly.x + 10, this.fly.y - 6, 7, 4, Math.PI / 4, 0, Math.PI * 2);
+                this.ctx.arc(this.fly.x + 4, this.fly.y - 3 - hungerPercent * 2, 2, 0, Math.PI * 2);
                 this.ctx.fill();
 
-                // Draw energy indicator
-                const energyPercent = this.fly.energy / 100;
-                const barWidth = 100;
-                const barHeight = 8;
+                // Pupils
+                this.ctx.fillStyle = '#000';
+                const angle = Math.atan2(this.food.y - this.fly.y, this.food.x - this.fly.x);
+                const pupilDist = 1;
+                this.ctx.beginPath();
+                this.ctx.arc(
+                    this.fly.x - 4 + Math.cos(angle) * pupilDist,
+                    this.fly.y - 3 + Math.sin(angle) * pupilDist,
+                    1,
+                    0,
+                    Math.PI * 2
+                );
+                this.ctx.fill();
+                this.ctx.beginPath();
+                this.ctx.arc(
+                    this.fly.x + 4 + Math.cos(angle) * pupilDist,
+                    this.fly.y - 3 + Math.sin(angle) * pupilDist,
+                    1,
+                    0,
+                    Math.PI * 2
+                );
+                this.ctx.fill();
+
+                // Wings with animation
+                const wingFlap = Math.sin(Date.now() / 50) * 0.3;
+                this.ctx.fillStyle = 'rgba(180, 180, 180, 0.7)';
+                this.ctx.beginPath();
+                this.ctx.ellipse(this.fly.x - 8, this.fly.y - 5, 6 + wingFlap, 3, -Math.PI / 4, 0, Math.PI * 2);
+                this.ctx.fill();
+                this.ctx.beginPath();
+                this.ctx.ellipse(this.fly.x + 8, this.fly.y - 5, 6 + wingFlap, 3, Math.PI / 4, 0, Math.PI * 2);
+                this.ctx.fill();
+
+                // Hunger indicator above fly
+                const barWidth = 40;
+                const barHeight = 4;
                 this.ctx.fillStyle = '#ddd';
-                this.ctx.fillRect(this.fly.x - barWidth / 2, this.fly.y - 25, barWidth, barHeight);
+                this.ctx.fillRect(this.fly.x - barWidth / 2, this.fly.y - 30, barWidth, barHeight);
                 
-                let energyColor = '#27ae60';
-                if (energyPercent < 0.3) energyColor = '#e74c3c';
-                else if (energyPercent < 0.6) energyColor = '#f39c12';
+                let barColor = '#27ae60';
+                if (this.hunger > 70) barColor = '#e74c3c';
+                else if (this.hunger > 40) barColor = '#f39c12';
                 
-                this.ctx.fillStyle = energyColor;
-                this.ctx.fillRect(this.fly.x - barWidth / 2, this.fly.y - 25, barWidth * energyPercent, barHeight);
+                this.ctx.fillStyle = barColor;
+                this.ctx.fillRect(this.fly.x - barWidth / 2, this.fly.y - 30, barWidth * (this.hunger / 100), barHeight);
             }
 
             updateDisplay() {
-                const energy = Math.max(0, Math.round(this.fly.energy));
-                document.getElementById('energyDisplay').textContent = energy;
-                
-                const energyPercent = energy / 100;
-                const energyBar = document.getElementById('energyBar');
-                energyBar.style.width = (energyPercent * 100) + '%';
-                
-                if (energyPercent < 0.3) {
-                    energyBar.className = 'progress-fill critical';
-                } else if (energyPercent < 0.6) {
-                    energyBar.className = 'progress-fill warning';
-                } else {
-                    energyBar.className = 'progress-fill';
-                }
+                // Hunger
+                const hungerPercent = Math.round(this.hunger);
+                document.getElementById('hungerDisplay').textContent = hungerPercent + '%';
+                document.getElementById('hungerBar').style.width = hungerPercent + '%';
 
+                // Distance
                 const distance = Math.round(this.getDistance(this.fly, this.food));
                 document.getElementById('distanceDisplay').textContent = distance + 'px';
 
+                // Stats
                 document.getElementById('foodEatenDisplay').textContent = this.stats.foodEaten;
                 document.getElementById('stepsDisplay').textContent = this.stats.steps;
 
+                // Playtime
                 if (this.startTime) {
-                    const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
-                    const minutes = Math.floor(elapsed / 60);
-                    const seconds = elapsed % 60;
-                    document.getElementById('timeDisplay').textContent = 
-                        `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    this.stats.playtimeSeconds = Math.floor((Date.now() - this.startTime) / 1000);
+                    document.getElementById('playtimeDisplay').textContent = this.getPlaytimeString();
+                }
+
+                // Mood
+                this.updateMood();
+            }
+
+            getPlaytimeString() {
+                const mins = Math.floor(this.stats.playtimeSeconds / 60);
+                const secs = this.stats.playtimeSeconds % 60;
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+
+            updateMood() {
+                const hunger = this.hunger;
+                let mood = '😊';
+                let moodText = 'הזבוב שמח!';
+                let indicator = '🟢 הזבוב שמח!';
+
+                if (hunger > 85) {
+                    mood = '😭';
+                    moodText = 'הזבוב רעב מאוד!';
+                    indicator = '🔴 הזבוב מתים מרעב!';
+                } else if (hunger > 70) {
+                    mood = '😢';
+                    moodText = 'הזבוב רעב...';
+                    indicator = '🟠 הזבוב רעב!';
+                } else if (hunger > 50) {
+                    mood = '😐';
+                    moodText = 'הזבוב בסדר';
+                    indicator = '🟡 הזבוב כמעט רעב';
+                } else if (hunger < 15) {
+                    mood = '🤩';
+                    moodText = 'הזבוב אוכל עכשיו!';
+                    indicator = '🟢 הזבוב שמח מאוד!';
+                } else {
+                    mood = '😊';
+                    moodText = 'הזבוב שמח!';
+                    indicator = '🟢 הזבוב שמח!';
+                }
+
+                const flyMoodEl = document.getElementById('flyMood');
+                flyMoodEl.textContent = mood;
+                
+                // Remove old classes
+                flyMoodEl.className = 'fly-mood';
+                
+                if (hunger > 70) {
+                    flyMoodEl.classList.add('sleepy');
+                } else if (hunger < 20) {
+                    flyMoodEl.classList.add('excited');
+                } else {
+                    flyMoodEl.classList.add('wobble');
+                }
+
+                document.getElementById('moodDescription').textContent = moodText;
+                
+                const indicatorEl = document.getElementById('moodIndicator');
+                indicatorEl.textContent = indicator;
+                indicatorEl.className = 'mood-indicator';
+                
+                if (hunger > 80) {
+                    indicatorEl.classList.add('mood-hungry');
+                } else if (hunger > 50) {
+                    indicatorEl.classList.add('mood-ok');
+                } else {
+                    indicatorEl.classList.add('mood-good');
                 }
             }
 
             updateStatus(status) {
-                document.getElementById('aiStatusDisplay').textContent = status;
+                document.getElementById('statusDisplay').textContent = status;
             }
         }
 
-        // Initialize simulation
-        const sim = new FlySimulation();
+        // Initialize
+        const sim = new FlyPetSimulation();
     </script>
 </body>
 </html>
