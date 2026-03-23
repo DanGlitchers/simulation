@@ -2,108 +2,671 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>סימולציית זבוב AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>סימולציית זבוב AI משופרת</title>
     <style>
-        body { font-family: sans-serif; text-align: center; background: #f0f0f0; }
-        canvas { background: white; border: 2px solid #333; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
-        .controls { margin: 20px; }
-        input { padding: 10px; width: 300px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .canvas-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        canvas {
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+            border: 3px solid #333;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            cursor: crosshair;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .controls-panel {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input[type="password"],
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="password"]:focus,
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 8px rgba(102, 126, 234, 0.2);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-start:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-start:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-stop {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-stop:hover:not(:disabled) {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .btn-stop:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-reset {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #7f8c8d;
+            transform: translateY(-2px);
+        }
+
+        .stats-panel {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #764ba2;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .stat-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .stat-value {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .stat-value.critical {
+            color: #e74c3c;
+        }
+
+        .stat-value.good {
+            color: #27ae60;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+        }
+
+        .progress-fill.warning {
+            background: linear-gradient(90deg, #f39c12 0%, #e67e22 100%);
+        }
+
+        .progress-fill.critical {
+            background: linear-gradient(90deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #1565c0;
+        }
+
+        @media (max-width: 800px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-size: 13px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+        }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>🪰 סימולציית זבוב AI משופרת</h1>
 
-    <h1>זבוב ה-AI שלי 🪰</h1>
-    
-    <div class="controls">
-        <input type="password" id="apiKey" placeholder="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">
-        <p>הזבוב ינסה להגיע לאוכל (העיגול האדום) בעזרת ה-AI.</p>
+        <div class="main-grid">
+            <div class="canvas-section">
+                <canvas id="simCanvas" width="600" height="500"></canvas>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background: #333;"></div>
+                        <span>זבוב</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background: #e74c3c;"></div>
+                        <span>אוכל</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background: rgba(102, 126, 234, 0.3);"></div>
+                        <span>path זיכרון</span>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="controls-panel">
+                    <h2 style="margin-bottom: 20px; color: #333;">⚙️ הגדרות</h2>
+
+                    <div class="control-group">
+                        <label>🔑 OpenAI API Key (אופציונלי)</label>
+                        <input type="password" id="apiKey" placeholder="sk-... (אם לא תיתן, יש fallback logic)">
+                    </div>
+
+                    <div class="control-group">
+                        <label>🤖 מודל AI</label>
+                        <select id="model">
+                            <option value="gpt-4o-mini">GPT-4o Mini (מהיר וזול)</option>
+                            <option value="gpt-4o">GPT-4o (חכם יותר)</option>
+                            <option value="gpt-3.5-turbo">GPT-3.5 Turbo (קלאסי)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label>⏱️ מהירות החלטות (שניות)</label>
+                        <input type="range" id="speed" min="1" max="5" value="2" style="cursor: pointer; width: 100%;">
+                        <div style="text-align: center; color: #667eea; font-weight: bold; margin-top: 5px;">
+                            <span id="speedValue">2</span>s
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn-start" id="startBtn">▶️ התחל</button>
+                        <button class="btn-stop" id="stopBtn" disabled>⏹️ עצור</button>
+                        <button class="btn-reset" id="resetBtn">🔄 אפס</button>
+                    </div>
+
+                    <div class="info-box">
+                        💡 <strong>טיפ:</strong> הזבוב צריך לאכול כדי לשרוד! אנרגיה מינימלית = סוף המשחק. בלי API Key, זה משתמש בlogic אקראי חכם.
+                    </div>
+                </div>
+
+                <div class="stats-panel" style="margin-top: 20px;">
+                    <h2 style="margin-bottom: 20px; color: #333;">📊 סטטיסטיקות</h2>
+
+                    <div class="stat-item">
+                        <span class="stat-label">⚡ אנרגיה</span>
+                        <span class="stat-value" id="energyDisplay">100</span>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="energyBar" style="width: 100%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-item">
+                        <span class="stat-label">📏 מרחק לאוכל</span>
+                        <span class="stat-value" id="distanceDisplay">--</span>
+                    </div>
+
+                    <div class="stat-item">
+                        <span class="stat-label">🍖 אוכל אכול</span>
+                        <span class="stat-value good" id="foodEatenDisplay">0</span>
+                    </div>
+
+                    <div class="stat-item">
+                        <span class="stat-label">🔄 צעדים</span>
+                        <span class="stat-value" id="stepsDisplay">0</span>
+                    </div>
+
+                    <div class="stat-item">
+                        <span class="stat-label">⏱️ זמן</span>
+                        <span class="stat-value" id="timeDisplay">0:00</span>
+                    </div>
+
+                    <div class="stat-item">
+                        <span class="stat-label">🧠 סטטוס AI</span>
+                        <span class="stat-value" id="aiStatusDisplay">מוכן</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <canvas id="simCanvas" width="800" height="500"></canvas>
-
     <script>
-        const canvas = document.getElementById('simCanvas');
-        const ctx = canvas.getContext('2d');
-        const apiKeyInput = document.getElementById('apiKey');
-
-        let fly = { x: 400, y: 250, energy: 100 };
-        let food = { x: Math.random() * 700 + 50, y: Math.random() * 400 + 50 };
-
-        function draw() {
-            // ניקוי מסך
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // ציור אוכל
-            ctx.fillStyle = 'red';
-            ctx.beginPath();
-            ctx.arc(food.x, food.y, 10, 0, Math.PI * 2);
-            ctx.fill();
-
-            // ציור זבוב
-            ctx.fillStyle = '#333';
-            ctx.beginPath();
-            ctx.arc(fly.x, fly.y, 8, 0, Math.PI * 2); // גוף
-            ctx.fill();
-            
-            // כנפיים
-            ctx.fillStyle = 'rgba(200, 200, 200, 0.6)';
-            ctx.beginPath();
-            ctx.arc(fly.x - 10, fly.y - 5, 7, 0, Math.PI * 2);
-            ctx.arc(fly.x + 10, fly.y - 5, 7, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
-        async function askAI() {
-            const key = apiKeyInput.value;
-            if (!key) {
-                // אם אין מפתח, תנועה אקראית
-                moveFly(Math.random() > 0.5 ? "UP" : "DOWN");
-                return;
+        class FlySimulation {
+            constructor() {
+                this.canvas = document.getElementById('simCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                
+                this.reset();
+                
+                this.isRunning = false;
+                this.simulationInterval = null;
+                this.aiCallInterval = null;
+                this.startTime = null;
+                
+                this.memory = [];
+                this.apiKey = '';
+                this.model = 'gpt-4o-mini';
+                this.decisionInterval = 2000; // 2 seconds default
+                
+                this.setupEventListeners();
+                this.draw();
             }
 
-            try {
-                const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${key}`
-                    },
-                    body: JSON.stringify({
-                        model: "gpt-3.5-turbo",
-                        messages: [{role: "user", content: `You are a fly at x:${fly.x}, y:${fly.y}. Food is at x:${food.x}, y:${food.y}. Move: UP, DOWN, LEFT, or RIGHT? Answer one word only.`}],
-                        max_tokens: 5
-                    })
+            reset() {
+                this.fly = {
+                    x: this.canvas.width / 2,
+                    y: this.canvas.height / 2,
+                    energy: 100,
+                    radius: 8
+                };
+                this.food = this.generateFood();
+                this.stats = {
+                    steps: 0,
+                    foodEaten: 0,
+                    startTime: Date.now()
+                };
+                this.memory = [];
+                this.startTime = null;
+                this.lastAICall = Date.now();
+            }
+
+            generateFood() {
+                return {
+                    x: Math.random() * (this.canvas.width - 100) + 50,
+                    y: Math.random() * (this.canvas.height - 100) + 50,
+                    radius: 10
+                };
+            }
+
+            setupEventListeners() {
+                document.getElementById('startBtn').addEventListener('click', () => this.start());
+                document.getElementById('stopBtn').addEventListener('click', () => this.stop());
+                document.getElementById('resetBtn').addEventListener('click', () => this.resetSimulation());
+                
+                document.getElementById('apiKey').addEventListener('change', (e) => {
+                    this.apiKey = e.target.value;
+                });
+                
+                document.getElementById('model').addEventListener('change', (e) => {
+                    this.model = e.target.value;
                 });
 
-                const data = await response.json();
-                const decision = data.choices[0].message.content.toUpperCase();
-                moveFly(decision);
-            } catch (err) {
-                console.error("AI Error:", err);
+                document.getElementById('speed').addEventListener('input', (e) => {
+                    this.decisionInterval = parseInt(e.target.value) * 1000;
+                    document.getElementById('speedValue').textContent = e.target.value;
+                    if (this.isRunning) {
+                        clearInterval(this.aiCallInterval);
+                        this.aiCallInterval = setInterval(() => this.makeDecision(), this.decisionInterval);
+                    }
+                });
+            }
+
+            start() {
+                if (this.isRunning) return;
+                
+                this.isRunning = true;
+                this.startTime = Date.now();
+                this.stats.startTime = Date.now();
+                
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = false;
+                
+                this.simulationInterval = setInterval(() => this.update(), 30);
+                this.aiCallInterval = setInterval(() => this.makeDecision(), this.decisionInterval);
+                
+                this.updateStatus('פעיל ✅');
+            }
+
+            stop() {
+                this.isRunning = false;
+                clearInterval(this.simulationInterval);
+                clearInterval(this.aiCallInterval);
+                
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+                
+                this.updateStatus('עצור');
+            }
+
+            resetSimulation() {
+                this.stop();
+                this.reset();
+                this.draw();
+                this.updateDisplay();
+                this.updateStatus('מוכן');
+            }
+
+            async makeDecision() {
+                this.updateStatus('חושב...');
+                
+                if (this.apiKey) {
+                    await this.askAI();
+                } else {
+                    this.smartRandomMove();
+                }
+                
+                this.updateStatus('פעיל ✅');
+            }
+
+            async askAI() {
+                try {
+                    const distToFood = this.getDistance(this.fly, this.food);
+                    const prompt = `You are a fly at position (${Math.round(this.fly.x)}, ${Math.round(this.fly.y)}). 
+Food is at (${Math.round(this.food.x)}, ${Math.round(this.food.y)}), distance: ${Math.round(distToFood)}px.
+Your energy: ${Math.round(this.fly.energy)}/100.
+Recent decisions: ${this.memory.slice(-3).join(', ') || 'none'}.
+Make the BEST move to get food. Answer with ONLY one direction: UP, DOWN, LEFT, or RIGHT.`;
+
+                    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${this.apiKey}`
+                        },
+                        body: JSON.stringify({
+                            model: this.model,
+                            messages: [{ role: "user", content: prompt }],
+                            max_tokens: 5,
+                            temperature: 0.3
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API error: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    const decision = data.choices[0].message.content.toUpperCase().trim();
+                    
+                    this.moveFly(decision);
+                } catch (err) {
+                    console.error("AI Error:", err);
+                    this.updateStatus('שגיאת API, fallback');
+                    this.smartRandomMove();
+                }
+            }
+
+            smartRandomMove() {
+                const distToFood = this.getDistance(this.fly, this.food);
+                const angleToFood = Math.atan2(this.food.y - this.fly.y, this.food.x - this.fly.x);
+                
+                // 70% chance to move toward food, 30% random
+                if (Math.random() < 0.7) {
+                    const angle = angleToFood + (Math.random() - 0.5) * 0.5;
+                    const directions = ['RIGHT', 'LEFT', 'DOWN', 'UP'];
+                    const bestDir = Math.abs(Math.cos(angle)) > Math.abs(Math.sin(angle)) 
+                        ? (Math.cos(angle) > 0 ? 'RIGHT' : 'LEFT')
+                        : (Math.sin(angle) > 0 ? 'DOWN' : 'UP');
+                    this.moveFly(bestDir);
+                } else {
+                    const directions = ['UP', 'DOWN', 'LEFT', 'RIGHT'];
+                    this.moveFly(directions[Math.floor(Math.random() * directions.length)]);
+                }
+            }
+
+            getDistance(p1, p2) {
+                return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+            }
+
+            moveFly(direction) {
+                const step = 15;
+                const oldX = this.fly.x;
+                const oldY = this.fly.y;
+
+                if (direction.includes('UP')) this.fly.y = Math.max(this.fly.radius, this.fly.y - step);
+                if (direction.includes('DOWN')) this.fly.y = Math.min(this.canvas.height - this.fly.radius, this.fly.y + step);
+                if (direction.includes('LEFT')) this.fly.x = Math.max(this.fly.radius, this.fly.x - step);
+                if (direction.includes('RIGHT')) this.fly.x = Math.min(this.canvas.width - this.fly.radius, this.fly.x + step);
+
+                this.memory.push(direction);
+                if (this.memory.length > 5) this.memory.shift();
+
+                // Energy cost
+                this.fly.energy -= 2;
+
+                // Check collision with food
+                const dist = this.getDistance(this.fly, this.food);
+                if (dist < this.fly.radius + this.food.radius) {
+                    this.fly.energy = Math.min(100, this.fly.energy + 40);
+                    this.stats.foodEaten++;
+                    this.food = this.generateFood();
+                }
+
+                this.stats.steps++;
+            }
+
+            update() {
+                // Passive energy drain
+                this.fly.energy -= 0.05;
+
+                // Game over if energy depleted
+                if (this.fly.energy <= 0) {
+                    this.stop();
+                    alert(`🎮 המשחק הסתיים!\nאוכל אכול: ${this.stats.foodEaten}\nצעדים: ${this.stats.steps}`);
+                    this.updateStatus('משחק הסתיים');
+                }
+
+                this.draw();
+                this.updateDisplay();
+            }
+
+            draw() {
+                // Clear with gradient
+                const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+                gradient.addColorStop(0, '#87CEEB');
+                gradient.addColorStop(1, '#E0F6FF');
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+                // Draw memory path
+                if (this.memory.length > 1) {
+                    this.ctx.strokeStyle = 'rgba(102, 126, 234, 0.2)';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.beginPath();
+                    this.ctx.arc(this.fly.x, this.fly.y, 30, 0, Math.PI * 2);
+                    this.ctx.stroke();
+                }
+
+                // Draw food
+                this.ctx.fillStyle = '#e74c3c';
+                this.ctx.beginPath();
+                this.ctx.arc(this.food.x, this.food.y, this.food.radius, 0, Math.PI * 2);
+                this.ctx.fill();
+
+                // Draw fly body
+                this.ctx.fillStyle = '#333';
+                this.ctx.beginPath();
+                this.ctx.arc(this.fly.x, this.fly.y, this.fly.radius, 0, Math.PI * 2);
+                this.ctx.fill();
+
+                // Draw wings
+                this.ctx.fillStyle = 'rgba(200, 200, 200, 0.6)';
+                this.ctx.beginPath();
+                this.ctx.ellipse(this.fly.x - 10, this.fly.y - 6, 7, 4, -Math.PI / 4, 0, Math.PI * 2);
+                this.ctx.fill();
+                this.ctx.beginPath();
+                this.ctx.ellipse(this.fly.x + 10, this.fly.y - 6, 7, 4, Math.PI / 4, 0, Math.PI * 2);
+                this.ctx.fill();
+
+                // Draw energy indicator
+                const energyPercent = this.fly.energy / 100;
+                const barWidth = 100;
+                const barHeight = 8;
+                this.ctx.fillStyle = '#ddd';
+                this.ctx.fillRect(this.fly.x - barWidth / 2, this.fly.y - 25, barWidth, barHeight);
+                
+                let energyColor = '#27ae60';
+                if (energyPercent < 0.3) energyColor = '#e74c3c';
+                else if (energyPercent < 0.6) energyColor = '#f39c12';
+                
+                this.ctx.fillStyle = energyColor;
+                this.ctx.fillRect(this.fly.x - barWidth / 2, this.fly.y - 25, barWidth * energyPercent, barHeight);
+            }
+
+            updateDisplay() {
+                const energy = Math.max(0, Math.round(this.fly.energy));
+                document.getElementById('energyDisplay').textContent = energy;
+                
+                const energyPercent = energy / 100;
+                const energyBar = document.getElementById('energyBar');
+                energyBar.style.width = (energyPercent * 100) + '%';
+                
+                if (energyPercent < 0.3) {
+                    energyBar.className = 'progress-fill critical';
+                } else if (energyPercent < 0.6) {
+                    energyBar.className = 'progress-fill warning';
+                } else {
+                    energyBar.className = 'progress-fill';
+                }
+
+                const distance = Math.round(this.getDistance(this.fly, this.food));
+                document.getElementById('distanceDisplay').textContent = distance + 'px';
+
+                document.getElementById('foodEatenDisplay').textContent = this.stats.foodEaten;
+                document.getElementById('stepsDisplay').textContent = this.stats.steps;
+
+                if (this.startTime) {
+                    const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+                    const minutes = Math.floor(elapsed / 60);
+                    const seconds = elapsed % 60;
+                    document.getElementById('timeDisplay').textContent = 
+                        `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }
+
+            updateStatus(status) {
+                document.getElementById('aiStatusDisplay').textContent = status;
             }
         }
 
-        function moveFly(direction) {
-            const step = 20;
-            if (direction.includes("UP")) fly.y -= step;
-            if (direction.includes("DOWN")) fly.y += step;
-            if (direction.includes("LEFT")) fly.x -= step;
-            if (direction.includes("RIGHT")) fly.x += step;
-
-            // בדיקה אם אכל
-            let dist = Math.sqrt((fly.x-food.x)**2 + (fly.y-food.y)**2);
-            if (dist < 20) {
-                food = { x: Math.random() * 700 + 50, y: Math.random() * 400 + 50 };
-                alert("הזבוב אכל! האוכל עבר מקום.");
-            }
-
-            draw();
-        }
-
-        // לולאת הסימולציה
-        draw();
-        setInterval(askAI, 2000); // ה-AI מחליט כל 2 שניות (כדי לא לבזבז כסף מהר מדי)
-
+        // Initialize simulation
+        const sim = new FlySimulation();
     </script>
 </body>
 </html>
